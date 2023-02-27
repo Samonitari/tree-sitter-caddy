@@ -1,0 +1,30 @@
+{
+  "name": "tree-sitter-caddy",
+  "version": "0.1.0",
+  "description": "Caddyfile grammar for tree-sitter",
+  "main": "bindings/node",
+  "scripts": {
+    "test": "tree-sitter test && script/parse-examples"
+  },
+  "keywords": [
+    "parser",
+    "lexer",
+    "caddyfile"
+  ],
+  "author": "Krisztián Szegi <kr.git@mszk.eu>",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.17.0"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.caddy",
+      "file-types": [
+        "Caddyfile"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ]
+    }
+  ]
+}
