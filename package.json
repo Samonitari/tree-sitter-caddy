@@ -25,7 +25,7 @@
     "url": "https://github.com/Samonitari/tree-sitter-caddy"
   },
   "scripts": {
-    "test": "tree-sitter test && script/parse-examples"
+    "test": "tree-sitter generate"
   },
   "tree-sitter": [
     {
