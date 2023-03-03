@@ -269,7 +269,7 @@
     },
     "domain_address": {
       "type": "PATTERN",
-      "value": "((([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9])\\.)+)[a-zA-Z]{2,}"
+      "value": "((([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\\.)+)[a-zA-Z]{2,6}"
     },
     "_port_number": {
       "type": "SEQ",
