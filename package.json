@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "description": "Caddyfile grammar for tree-sitter",
   "main": "bindings/node",
-  "scripts": {
-    "test": "tree-sitter test && script/parse-examples"
-  },
   "keywords": [
     "parser",
     "lexer",
@@ -13,8 +10,22 @@
   ],
   "author": "Krisztián Szegi <kr.git@mszk.eu>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Samonitari/tree-sitter-caddy/issues"
+  },
+  "homepage": "https://github.com/Samonitari/tree-sitter-caddy",
   "dependencies": {
     "nan": "^2.17.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.20.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Samonitari/tree-sitter-caddy"
+  },
+  "scripts": {
+    "test": "tree-sitter test && script/parse-examples"
   },
   "tree-sitter": [
     {
@@ -28,3 +39,4 @@
     }
   ]
 }
+
