@@ -464,6 +464,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "directive_error"
+        },
+        {
+          "type": "SYMBOL",
           "name": "directive_file_server"
         },
         {
@@ -993,16 +997,117 @@
               "type": "SEQ",
               "members": [
                 {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "_horizontal_whitespaces"
+                              },
+                              {
+                                "type": "FIELD",
+                                "name": "file_server_option_browse",
+                                "content": {
+                                  "type": "STRING",
+                                  "value": "browse"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_vertical_whitespace"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "{"
+                        },
+                        {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "_empty_line"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "comment_line"
+                              },
+                              {
+                                "type": "FIELD",
+                                "name": "file_server_option_browse",
+                                "content": {
+                                  "type": "STRING",
+                                  "value": "browse"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "directive_error": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "error"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
                   "type": "SYMBOL",
-                  "name": "_horizontal_whitespaces"
+                  "name": "matcher_token"
                 },
                 {
-                  "type": "FIELD",
-                  "name": "file_server_option_browse",
-                  "content": {
-                    "type": "STRING",
-                    "value": "browse"
-                  }
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
                 }
               ]
             },
@@ -1018,45 +1123,43 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "STRING",
-                  "value": "{"
-                },
-                {
-                  "type": "REPEAT1",
-                  "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_empty_line"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "comment_line"
-                      },
-                      {
-                        "type": "FIELD",
-                        "name": "file_server_option_browse",
-                        "content": {
-                          "type": "STRING",
-                          "value": "browse"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "http_message"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_horizontal_whitespaces"
                         }
-                      }
-                    ]
-                  }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
                 },
                 {
-                  "type": "STRING",
-                  "value": "}"
+                  "type": "SYMBOL",
+                  "name": "http_error_code"
                 }
               ]
-            },
-            {
-              "type": "BLANK"
             }
           ]
         }
       ]
+    },
+    "http_message": {
+      "type": "PATTERN",
+      "value": "\"[\\w -]+\""
+    },
+    "http_error_code": {
+      "type": "PATTERN",
+      "value": "\\d{3}"
     },
     "directive_handle": {
       "type": "SEQ",

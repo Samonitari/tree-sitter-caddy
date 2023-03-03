@@ -155,7 +155,7 @@ module.exports = grammar({
       $.directive_basicauth,
       $.directive_bind,
       $.directive_encode,
-      // $.directive_error,
+      $.directive_error,
       $.directive_file_server,
       // $.directive_forward_auth,
       $.directive_handle,
@@ -281,20 +281,45 @@ module.exports = grammar({
 
     directive_file_server: $ => seq(
       field('directive_type', 'file_server'),
-      optional(seq($._horizontal_whitespaces, $.matcher_token)),
-      optional(seq($._horizontal_whitespaces, field('file_server_option_browse', 'browse'))),
+      optional(seq( $._horizontal_whitespaces, $.matcher_token)),
       optional(seq(
-      '{',
-        // TODO: file_server options
-      repeat1(choice(
-        $._empty_line,
-        $.comment_line,
-        field('file_server_option_browse', 'browse')
+        choice(
+          seq(
+            repeat1(seq($._horizontal_whitespaces, field('file_server_option_browse', 'browse'))),
+            $._vertical_whitespace
+          ),
+          seq(
+          '{',
+            // TODO: file_server options
+          repeat1(choice(
+            $._empty_line,
+            $.comment_line,
+            field('file_server_option_browse', 'browse')
+          )),
+          '}'
+          )
+        )
       )),
-      '}'
-      ))
+      $._vertical_whitespace
     ),
     
+    directive_error: $ => seq(
+      field('directive_type', 'error'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      choice(
+        seq(
+          optional(seq($.http_message, $._horizontal_whitespaces)),
+          $.http_error_code,
+        ),
+        // TODO: message in block option
+      )
+    ),
+
+    http_message: $ => /"[\w -]+"/,
+
+    http_error_code: $ => /\d{3}/,
+
     directive_handle: $ => seq(
       field('directive_type', 'handle'),
       $._horizontal_whitespaces,
