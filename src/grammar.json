@@ -508,6 +508,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "directive_route"
+        },
+        {
+          "type": "SYMBOL",
           "name": "directive_tls"
         }
       ]
@@ -699,7 +703,7 @@
           "name": "basicauth_user_pass",
           "content": {
             "type": "PATTERN",
-            "value": "\\S+"
+            "value": "[a-zA-Z0-9\\+\\/=\\$\\.]+"
           }
         },
         {
@@ -2344,6 +2348,72 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "directive_route": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "route"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "matcher_token"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_empty_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "comment_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "directive_block"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },

@@ -46,7 +46,7 @@ The following directives are **at least partially\*** handled.
 - [x] `reverse_proxy`
 - [ ] `rewrite`
 - [x] `root`
-- [ ] `route`
+- [x] `route`
 - [ ] `skip_log`
 - [ ] `templates`
 - [x] `tls`
