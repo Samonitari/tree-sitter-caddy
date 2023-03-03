@@ -504,6 +504,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "directive_rewrite"
+        },
+        {
+          "type": "SYMBOL",
           "name": "directive_root"
         },
         {
@@ -2235,6 +2239,48 @@
         {
           "type": "STRING",
           "value": "html"
+        }
+      ]
+    },
+    "directive_rewrite": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "rewrite"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "matcher_token"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "redir_or_rewrite_target"
         }
       ]
     },

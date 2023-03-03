@@ -159,6 +159,10 @@
           "named": true
         },
         {
+          "type": "directive_rewrite",
+          "named": true
+        },
+        {
           "type": "directive_root",
           "named": true
         },
@@ -536,6 +540,36 @@
         },
         {
           "type": "site_address",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_rewrite",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "rewrite",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "redir_or_rewrite_target",
           "named": true
         }
       ]
@@ -1423,6 +1457,10 @@
   },
   {
     "type": "reverse_proxy",
+    "named": false
+  },
+  {
+    "type": "rewrite",
     "named": false
   },
   {

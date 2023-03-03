@@ -44,7 +44,7 @@ The following directives are **at least partially\*** handled.
 - [ ] `request_header`
 - [ ] `respond`
 - [x] `reverse_proxy`
-- [ ] `rewrite`
+- [x] `rewrite`
 - [x] `root`
 - [x] `route`
 - [ ] `skip_log`
