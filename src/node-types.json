@@ -1,5 +1,10 @@
 [
   {
+    "type": "basicauth_credential",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "directive_abort",
     "named": true,
     "fields": {
@@ -18,6 +23,44 @@
       "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_basicauth",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "basicauth",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "basicauth_credential",
+          "named": true
+        },
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "hash_algorithm",
+          "named": true
+        },
         {
           "type": "matcher_token",
           "named": true
@@ -61,6 +104,10 @@
       "types": [
         {
           "type": "directive_abort",
+          "named": true
+        },
+        {
+          "type": "directive_basicauth",
           "named": true
         },
         {
@@ -161,12 +208,26 @@
             "named": false
           }
         ]
+      },
+      "file_server_option_browse": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "browse",
+            "named": false
+          }
+        ]
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
         {
           "type": "matcher_token",
           "named": true
@@ -359,6 +420,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        },
         {
           "type": "redir_code",
           "named": true
@@ -709,6 +774,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "hash_algorithm",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "header_name",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "header_value",
@@ -1083,6 +1158,10 @@
     "named": false
   },
   {
+    "type": "basicauth",
+    "named": false
+  },
+  {
     "type": "bcrypt",
     "named": false
   },
@@ -1169,10 +1248,6 @@
   {
     "type": "header",
     "named": false
-  },
-  {
-    "type": "header_name",
-    "named": true
   },
   {
     "type": "html",

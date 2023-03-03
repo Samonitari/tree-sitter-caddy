@@ -152,7 +152,7 @@ module.exports = grammar({
     directive_block: $ => choice(    
       $.directive_abort,
       // $.directive_acme_server,
-      // $.directive_basicauth,
+      $.directive_basicauth,
       $.directive_bind,
       $.directive_encode,
       // $.directive_error,
@@ -193,26 +193,28 @@ module.exports = grammar({
       $._vertical_whitespaces
     ),
 
-    // directive_basicauth: $ => seq(
-    //   field('directive_type', 'basicauth'),
-    //   optional(seq($._horizontal_whitespaces, $.matcher_token)),
-    //   optional(seq(
-    //     $._horizontal_whitespaces,
-    //     $.hash_algorithm,
-    //     optional(seq(
-    //       $._horizontal_whitespaces,
-    //       field('basicauth_realm_name', /[\w-]+/)
-    //     )),
-    //   )),
-    //   $._horizontal_whitespaces,
-    //   '{',
-    //   $._vertical_whitespace,
-    //   repeat1(choice(
-    //     $._empty_line,
-    //     $.comment_line,
-    //     $.basicauth_credential
-    //   ))
-    // ),
+    directive_basicauth: $ => seq(
+      field('directive_type', 'basicauth'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      optional(seq(
+        $.hash_algorithm,
+        $._horizontal_whitespaces,
+        optional(seq(
+          field('basicauth_realm_name', /[\w-]+/),
+          $._horizontal_whitespaces,
+        )),
+      )),
+      // At least one credential has to be set, so this directive's {} block is not optional
+      '{',
+      $._vertical_whitespace,
+      repeat1(choice(
+        $._empty_line,
+        $.comment_line,
+        $.basicauth_credential
+      )),
+      '}'
+    ),
 
     hash_algorithm: $ => choice(
       'bcrypt'
@@ -280,12 +282,16 @@ module.exports = grammar({
     directive_file_server: $ => seq(
       field('directive_type', 'file_server'),
       optional(seq($._horizontal_whitespaces, $.matcher_token)),
-      optional(seq($._horizontal_whitespaces, 'browse')),
+      optional(seq($._horizontal_whitespaces, field('file_server_option_browse', 'browse'))),
       optional(seq(
-        optional($._horizontal_whitespaces),
-        '{',
+      '{',
         // TODO: file_server options
-        '}'
+      repeat1(choice(
+        $._empty_line,
+        $.comment_line,
+        field('file_server_option_browse', 'browse')
+      )),
+      '}'
       ))
     ),
     
@@ -293,30 +299,28 @@ module.exports = grammar({
       field('directive_type', 'handle'),
       $._horizontal_whitespaces,
       optional(seq($.matcher_token, $._horizontal_whitespaces)),
-      seq(
-        '{',
-        repeat1(choice(
-          $._empty_line,
-          $.comment_line,
-          $.directive_block,
-        )),
-        '}'
-      )
+      // At least one child directive has to be set, so this directive's {} block is not optional
+      '{',
+      repeat1(choice(
+        $._empty_line,
+        $.comment_line,
+        $.directive_block,
+      )),
+      '}'
     ),
 
     directive_handle_path: $ => seq(
       field('directive_type', 'handle_path'),
       $._horizontal_whitespaces,
       optional(seq($.matcher_token, $._horizontal_whitespaces)),
-      seq(
-        '{',
-        repeat1(choice(
-          $._empty_line,
-          $.comment_line,
-          $.directive_block,
-        )),
-        '}'
-      )
+      // At least one child directive has to be set, so this directive's {} block is not optional
+      '{',
+      repeat1(choice(
+        $._empty_line,
+        $.comment_line,
+        $.directive_block,
+      )),
+      '}'
     ),
     
     directive_header: $ => seq(
@@ -470,7 +474,7 @@ module.exports = grammar({
     directive_redir: $ => seq(
       field('directive_type', 'redir'),
       $._horizontal_whitespaces,
-      // optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
       $.redir_or_rewrite_target,
       optional($.redir_code)
     ),
