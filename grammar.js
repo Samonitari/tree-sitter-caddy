@@ -99,7 +99,7 @@ module.exports = grammar({
 
     // https://regex101.com/r/1Nfemn/2
     // PLEASE DON'T USE THIS TO DELETE https://regex101.com/delete/fDMBWjTwA2aWYy2HFbVBe9dX
-    domain_address: $ => /((([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9])\.)+)[a-zA-Z]{2,}/,
+    domain_address: $ => /((([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\.)+)[a-zA-Z]{2,6}/,
 
     _port_number: $ => seq(
       ':',
