@@ -1,41 +1,3 @@
-const DIRECTIVE_NAMES = [
-  'abort', // Matcher; no args; no block
-  'acme_server', // Matcher; no args; ca: <id>, lifetime: <duration>
-  'basicauth', // Matcher, [<hash_algorithm> [<realm>]]; <username>: <hashed_password> [<salt_base64>]
-  'bind', // NoM; <hosts...>
-  'encode', // Matcher; <formats...>; gzip: [<level>], zstd, minimum_length: <length>, match block
-  'error', // Matcker; (<status>|<message> [<status>]); message: <text>
-  'file_server', // Matcher; [browse]; { various }
-  'forward_auth', // Matcher; [<upstreams...>] { uri: <to>, copy_headers: <fields...>|{ <fields> }}
-  'handle', // Matcher; { <directives...> }
-  'handle_errors', // NoM; { <directives...> }
-  'handle_path', // PathMatcher; { <directives...> }
-  'header', // Matcher; [[+|-|?]<field> [<value>|<find>] [<replace>]]; various
-  'import', // NoM; <pattern> [<args...>]
-  'log', // NoM; { output: <writer_module>, format: <encoder_module>, level: <level>}
-  'map', // Matcher <source> <destinations...>; { [-]<input>: <outputs...>, default: <defaults...>}
-  'method', // Matcher; <method>
-  'metrics', // Matcher; { disable_openmetrics }
-  'php_fastcgi', // Matcher; <php-fpm_gateways...> {various}
-  'push', // Matcher; [<resource>] { various }
-  'redir', // Matcher; <to> [<code>]
-  'request_body', // Matcher; { max_size: <value>}
-  'request_header', //Matcher; 
-  'respond',
-  'reverse_proxy',
-  'rewrite',
-  'root',
-  'route',
-  'skip_log',
-  'templates',
-  'tls',
-  'tracing',
-  'try_files',
-  'uri',
-  'vars'
-];
-
-
 const STANDARD_MATCHER_NAMES = [
   'expression',
   'file',
@@ -56,18 +18,35 @@ const STANDARD_MATCHER_NAMES = [
 module.exports = grammar({
   name: 'caddy',
 
+  extras: $ => [/[\t\p{Zs}]/],
+  
   externals: $ => [$._eof],
 
-  word: $ => $._valid_uri_path_string,
+  // word: $ => $._valid_uri_path_string,
 
   rules: {
     document: $ => repeat(choice(
-      $.comment,
+      $._empty_line,
+      $.comment_line,
+      $.global_options_block,
       $.snippet,
-      $.site_block
+      $.site_block,
+      $.directive_import // Special directive - can appear anywhere in the file!
     )),
 
+    // _horizontal_whitespace: $ => /[\t\p{Zs}]/,
+    _horizontal_whitespaces: $ => prec(2, /[\t\p{Zs}]+/),
+
+    _vertical_whitespace: $ => /[\n\r\n\f\x85\x{2028}\x{2029}]/,
+    _vertical_whitespaces: $ => /[\n\r\f\x85\x{2028}\x{2029}]+/,
+
+    _whitespace: $ => /[\t\p{Zs}\n\r\n\f\x85\x{2028}\x{2029}]/,
+    _whitespaces: $ => /[\t\p{Zs}\n\r\n\f\x85\x{2028}\x{2029}]+/,
+
+    _empty_line: $ => /[\t\p{Zs}]*[\n\r\f\x86\x{2028}\x{2029}]/,
+
     comment: $ => token(seq('#', /.*/)),
+    comment_line: $ => token(seq('#', /.*/, /[\n\r\n\f\x85\x{2028}\x{2029}]/)),
 
     _newline: _ => choice(/\r/, /\n/, /\r\n/, /\u0085/, /\u000C/, /\u2028/, /\u2029/),
 
@@ -77,16 +56,16 @@ module.exports = grammar({
       // TODO: single site block doesn't require '{}' delimiting
       '{',
       repeat(choice(
-        $.comment,
+        $._empty_line,
+        $.comment_line,
         $.matcher_definition,
-        $.directive_block,
-        $.import
+        $.directive_block
       )),
       '}'
     ),
 
     // TODO: Make sure all of this is handled, like (currently missing) only http://
-    // https://caddyserveGr.com/docs/caddyfile/concepts#addresses
+    // https://caddyserver.com/docs/caddyfile/concepts#addresses
     site_address: $ => seq(
       optional(
         $.protocol,
@@ -94,9 +73,9 @@ module.exports = grammar({
       choice(
         seq(
           $._ip_or_domain_address,
-          optional(
-            $._port_number
-          )
+          token.immediate(optional(
+            /:\d{1,5}/
+          ))
         ),
         $._port_number
       )
@@ -108,10 +87,10 @@ module.exports = grammar({
     ),
 
     _ip_or_domain_address: $ => choice(
+        prec(2, 'localhost'),
         $._ipv4_address,
         $._ipv6_address,
-        $.domain_address,
-        'localhost'
+        $.domain_address
     ),
 
     _ipv4_address: $ => /((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/,
@@ -130,8 +109,12 @@ module.exports = grammar({
     matcher_definition: $ => seq(
       $.matcher_name,
       // TODO: blocks are optional if only one matcher is used
-      '{',
-      $.standard_matcher,
+      seq('{', optional($._horizontal_whitespaces)),
+      repeat(choice(
+        $.comment_line,
+        $._empty_line,
+        $.standard_matcher
+      )),
       '}'
     ),
 
@@ -141,13 +124,31 @@ module.exports = grammar({
     )),
     
     standard_matcher: $ => seq(
-      choice(...STANDARD_MATCHER_NAMES),
-      // TODO: matcher args needs serious work
-      seq(
-        /[\w\/*]/
-      )
+      // choice(...STANDARD_MATCHER_NAMES),
+      // // TODO: matcher args needs serious work
+      // seq(
+      //   /[\w\/*]/
+      // )
+      choice(
+        $.matcher_path,
+        $.matcher_path_regexp,
+      ),
+      $._vertical_whitespace
     ),
 
+    matcher_path: $ => seq(
+      field('matcher_type', 'path'),
+      $._horizontal_whitespaces,
+      $.unix_path
+    ),
+    
+    matcher_path_regexp: $ => seq(
+      field('matcher_type', 'path_regexp'),
+      $._horizontal_whitespaces,
+      optional(seq(field('path_regexp_matcher_name', /\w+/), $._horizontal_whitespaces)),
+      /\S+/
+    ),
+    
     directive_block: $ => choice(    
       $.directive_abort,
       // $.directive_acme_server,
@@ -155,26 +156,26 @@ module.exports = grammar({
       $.directive_bind,
       $.directive_encode,
       // $.directive_error,
-      // $.directive_file_server,
+      $.directive_file_server,
       // $.directive_forward_auth,
       $.directive_handle,
       // $.directive_handle_errors,
-      // $.directive_handle_path,
+      $.directive_handle_path,
       $.directive_header,
-      // $.directive_import,
-      // $.directive_log,
+      $.directive_import,
+      $.directive_log,
       // $.directive_map,
       // $.directive_method,
       // $.directive_metrics,
       // $.directive_php_fastcgi,
       // $.directive_push,
       $.directive_redir,
-      // $.directive_request_body,
+      $.directive_request_body,
       // $.directive_request_header,
       // $.directive_respond,
-      // $.directive_reverse_proxy,
+      $.directive_reverse_proxy,
       // $.directive_rewrite,
-      // $.directive_root,
+      $.directive_root,
       // $.directive_route,
       // $.directive_skip_log,
       // $.directive_templates,
@@ -185,25 +186,66 @@ module.exports = grammar({
       // $.directive_var
     ),
 
-    directive_abort: $ => prec.left(seq(
-      field('directive_name', 'abort'),
-      optional($.matcher_token)
-    )),
+    directive_abort: $ => seq(
+      field('directive_type', 'abort'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      $._vertical_whitespaces
+    ),
+
+    // directive_basicauth: $ => seq(
+    //   field('directive_type', 'basicauth'),
+    //   optional(seq($._horizontal_whitespaces, $.matcher_token)),
+    //   optional(seq(
+    //     $._horizontal_whitespaces,
+    //     $.hash_algorithm,
+    //     optional(seq(
+    //       $._horizontal_whitespaces,
+    //       field('basicauth_realm_name', /[\w-]+/)
+    //     )),
+    //   )),
+    //   $._horizontal_whitespaces,
+    //   '{',
+    //   $._vertical_whitespace,
+    //   repeat1(choice(
+    //     $._empty_line,
+    //     $.comment_line,
+    //     $.basicauth_credential
+    //   ))
+    // ),
+
+    hash_algorithm: $ => choice(
+      'bcrypt'
+      // TODO: list of other algorithms?
+    ),
+
+    basicauth_credential: $ => seq(
+      field('basicauth_user_name', /\S+/),
+      $._horizontal_whitespaces,
+      field('basicauth_user_pass', /\S+/),
+      optional(seq(
+        $._horizontal_whitespaces,
+        field('basicauth_user_pass_saltb64', /[a-zA-Z0-9\+\/=]+/)
+      ))
+    ),
 
     directive_bind: $ => seq(
-      field('directive_name', 'bind'),
-      repeat1(seq(
-        optional(seq(
-          $._network,
-          '/'
-        )),
-        choice(
-          $._ipv4_address,
-          $._ipv6_address,
-          // TODO unix socket properly
-          $.unix_path
-        )
-      ))
+      field('directive_type', 'bind'),
+      $._horizontal_whitespaces,
+      repeat1($.network_address_wo_port)
+    ),
+
+    network_address_wo_port: $ => seq(
+      optional(seq(
+        $._network,
+        '/'
+      )),
+      choice(
+        $._ipv4_address,
+        $._ipv6_address,
+        // TODO unix socket properly
+        $.unix_path
+      )
     ),
 
     _network: $ => choice(
@@ -226,56 +268,75 @@ module.exports = grammar({
       /[\w\/\.-]+/
     ),
 
-    directive_encode: $ => prec.left(seq(
-      field('directive_name', 'encode'),
-      optional($.matcher_token),
+    directive_encode: $ => seq(
+      field('directive_type', 'encode'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
       repeat1($.encode_format)
-    )),
+    ),
 
     encode_format: $ => choice('gzip', 'zstd'),
 
-    // directive_file_server: $ => seq(
-    //   field('directive_name', 'file_server'),
-    //   optional($.matcher_token,),
-    //   optional('browse'),
-    //   optional(seq(
-    //     '{',
-    //     // TODO: file_server options
-    //     '}'
-    //   ))
-    // ),
+    directive_file_server: $ => seq(
+      field('directive_type', 'file_server'),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
+      optional(seq($._horizontal_whitespaces, 'browse')),
+      optional(seq(
+        optional($._horizontal_whitespaces),
+        '{',
+        // TODO: file_server options
+        '}'
+      ))
+    ),
     
-    directive_handle: $ =>seq(
-      field('directive_name', 'handle'),
-      optional($.matcher_token),
+    directive_handle: $ => seq(
+      field('directive_type', 'handle'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
       seq(
         '{',
-        repeat1($.directive_block),
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          $.directive_block,
+        )),
         '}'
       )
     ),
 
-    directive_handle_path: $ =>seq(
-      field('directive_name', 'handle_path'),
-      optional($.matcher_token),
+    directive_handle_path: $ => seq(
+      field('directive_type', 'handle_path'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
       seq(
         '{',
-        repeat1($.directive_block),
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          $.directive_block,
+        )),
         '}'
       )
     ),
     
-    directive_header: $ => prec.left(seq(
-      field('directive_name', 'header'),
-      optional($.matcher_token),
-      optional($.field_manipulator),
-      optional(seq(
-        '{',
-        repeat1($.field_manipulator),
-        optional('defer'),
-        '}',
-      ))
-    )),
+    directive_header: $ => seq(
+      field('directive_type', 'header'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      choice(
+        $.field_manipulator,
+        seq(
+          '{',
+          repeat1(choice(
+            $._empty_line,
+            $.comment_line,
+            $.field_manipulator,
+            'defer', $._vertical_whitespace
+          )),
+          '}',
+        )
+      )
+    ),
 
     field_manipulator: $ => choice(
       $.field_replace,
@@ -286,13 +347,16 @@ module.exports = grammar({
 
     field_replace: $ => seq(
       $.header_name,
+      $._horizontal_whitespaces,
       $.header_value,
+      $._horizontal_whitespaces,
       $.header_value
     ),
 
     field_add_or_set: $ => seq(
       optional('+'),
       $.header_name,
+      $._horizontal_whitespaces,
       $.header_value
     ),
 
@@ -304,32 +368,132 @@ module.exports = grammar({
     field_set_default: $ => seq(
       '?',
       $.header_name,
+      $._horizontal_whitespaces,
       $.header_value
     ),
 
     header_name: $ => /[\w-]+/,
 
     header_value: $ => choice(
-      /[\w:;\.,\\\/"'\?\!\(\){}\[\]@<>=+\*#\$\&`\|\~\^%\-]+/,
+      /[\w:;\.,\\\/'\?\!\(\){}\[\]@<>=+\*#\$\&`\|\~\^%\-]+/,
       seq(
         '"',
-        // /[\w:;\.,\\\/"'?!(){}\[\]@<>=-+\*#$&\`\|~\^% -]+/,
+        /[\w:;\.,\\\/'\?\!\(\){}\[\]@<>=+\*#\$\&`\|\~\^% \-]+/,
         '"'
       ),
       seq(
         "'",
-        // /[\w:;\.,\\\/"'?!(){}\[\]@<>=-+\*#$&\`\|~\^% -]+/,
+        /[\w:;\.,\\\/"\?\!\(\){}\[\]@<>=+\*#\$\&`\|\~\^% \-]+/,
         "'" 
       )
     ),
-       
+
+    directive_import: $ => seq(
+      field('directive_type', 'import'),
+      $._horizontal_whitespaces,
+      choice(
+        $.snippet_name
+        // TODO: file import?
+      ),
+      // TODO: optional args to pass
+      $._vertical_whitespace
+    ),
+
+    directive_log: $ => seq(
+      field('directive_type', 'log'),
+      $._horizontal_whitespaces,
+      optional(seq(
+        '{',
+        repeat(choice(
+          $._empty_line,
+          $.comment_line,
+          $.log_option_output,
+          $.log_option_format,
+          $.log_option_level
+        )),
+        '}'
+      ))
+    ),
+
+    log_option_output: $ => seq(
+      field('log_option_type', 'output'),
+      $._horizontal_whitespaces,
+      choice(
+        seq(choice('stderr', 'stdout', 'discard'), $._vertical_whitespace),
+        $._log_output_file,
+      )
+    ),
+
+    _log_output_file: $ => seq(
+      'file',
+      $._horizontal_whitespaces,
+      $.unix_path,
+      choice(
+        $._vertical_whitespace,
+        seq(
+          $._horizontal_whitespaces,
+          '{',
+          repeat(choice(
+            $._empty_line,
+            $.comment_line,
+            'roll_disabled',
+            seq('roll_size', $._horizontal_whitespaces, $.size_number),
+            'roll_uncompressed',
+            'roll_local_time',
+            seq('roll_keep', $._horizontal_whitespaces, /\d+/),
+            seq('roll_keep_for_days', $._horizontal_whitespaces, /\d+[a-zA-Z]*/),
+            )),
+          '}'
+        )
+      )
+    ),
+
+    size_number: $ => /\d+(\.\d+)?[a-zA-Z]*/,
+
+    log_option_format: $ => seq(
+      field('log_option_type', 'format'),
+      $._horizontal_whitespaces,
+      choice(
+        seq(choice('console', 'json'), $._vertical_whitespace),
+        //TODO: filter format module
+      ),
+      // TODO: format options
+    ),
+
+    log_option_level: $ => seq(
+      field('log_option_type', 'level'),
+      $._horizontal_whitespaces,
+      choice('INFO', 'info', 'ERROR', 'error'),
+      $._vertical_whitespace
+    ),
+    
     directive_redir: $ => seq(
-      field('directive_name', 'redir'),
-      // optional($.matcher_token),
+      field('directive_type', 'redir'),
+      $._horizontal_whitespaces,
+      // optional(seq($.matcher_token, $._horizontal_whitespaces)),
       $.redir_or_rewrite_target,
       optional($.redir_code)
     ),
 
+    directive_request_body: $ => seq(
+      field('directive_type', 'request_body'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      '{',
+      optional(repeat(choice(
+        $._empty_line,
+        $.comment_line,
+      ))),
+      // TODO: validate size literal?
+      seq('max_size', $.size_number),
+      optional(repeat(choice(
+        $._empty_line,
+        $.comment_line,
+      ))),
+      optional($._vertical_whitespace),
+      '}',
+    ),
+    
     redir_or_rewrite_target: $ => choice(
       field('address_target', seq(
         optional($.protocol),
@@ -339,17 +503,16 @@ module.exports = grammar({
       field('uri_path_target', $.uri_path_with_placeholders)
     ),
 
-    // uri_path_with_placeholders: $ => repeat1(choice(
-    //   $._valid_uri_path_string,
-    //   /\{[\w\.\*]+\}/,
-    // )),
-    // uri_path_with_placeholders: $ => token(seq(
-    //   /([\w\.\~\!\$\&'\(\)\*\+,;=:@-]|(%[0-9a-fA-F]{2}))+/,
-    //   optional(repeat(choice(
-    //     /([\w\.\~\!\$\&'\(\)\*\+,;=:@-]|(%[0-9a-fA-F]{2}))+/,
-    //     /\{[a-z\.]+\}/,
-    //   )))
-    // )),
+    directive_reverse_proxy: $ => seq(
+      field('directive_type', 'reverse_proxy'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      $.site_address,
+      optional(repeat(seq($._horizontal_whitespaces, $.site_address)))
+      // TODO: multiple address, and options block
+    ),
+    
+    // TODO: When can/must start with leading '/'?
     uri_path_with_placeholders: $ => token(repeat1(
       choice(
         /([\w\.\~\!\$\&'\(\)\*\+,;=:@-]|(%[0-9a-fA-F]{2}))+/,
@@ -357,20 +520,28 @@ module.exports = grammar({
       )
     )),
 
-    _valid_uri_path_string: $ => /([\w\.\~\!\$\&'\(\)\*\+,;=:@-]|(%[0-9a-fA-F]{2}))+/,
+    _valid_uri_path_string: $ => /\/([\w\.\~\!\$\&'\(\)\*\+,;=:@\/-]|(%[0-9a-fA-F]{2}))*/,
       
     redir_code: $ => choice(/3\d\d/, '401', 'temporary', 'permanent', 'html'),
+
+    directive_root: $ => seq(
+      field('directive_type', 'root'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      $.unix_path
+    ),
     
     directive_tls: $ => seq(
-      field('directive_name', 'tls'),
-      optional(choice(
-        'internal',
-        $.email_address
-      )),
+      field('directive_type', 'tls'),
+      $._horizontal_whitespaces,
+      optional(choice('internal', $.email_address)),
       optional(seq(
         field('cert_file', $.unix_path),
+        $._horizontal_whitespaces,
+        // token.immediate(prec(2, /[\t\p{Zs}]+/)),
         field('key_file', $.unix_path)
       )),
+      // $._vertical_whitespace
       // optional(seq(
       //   '{',
       //   // TODO: tls options
@@ -382,6 +553,7 @@ module.exports = grammar({
     // _email_address: $ => /[\w.-]+@[\w.-]+/,
 
     matcher_token: $ => choice(
+      '*',
       field('path_matcher', $._valid_uri_path_string),
       $.matcher_name
     ),
@@ -395,40 +567,50 @@ module.exports = grammar({
     subdirective_name: $ => /\w+/,
     // directive_arg: $ => /.*/
 
-    snippet: $ => seq(
-      $.snippet_name,
+    global_options_block: $ => seq(
       '{',
-      seq(choice(
-        $.comment,
-        $.matcher_definition,
-        $.directive_block
+      repeat(choice(
+        $._empty_line,
+        $.comment_line,
+        // TODO: actual global options
+        $.global_option_email,
+        $.global_option_auto_https
       )),
       '}'
     ),
 
+    global_option_email: $ => seq(
+      field('global_option_type', 'email'),
+      $._horizontal_whitespaces,
+      $.email_address,
+      $._vertical_whitespace
+    ),
+
+    global_option_auto_https: $ => seq(
+      field('global_option_type', 'auto_https'),
+      $._horizontal_whitespaces,
+      choice('off', 'disable_redirects', 'ignore_loaded_certs', 'disable_certs')
+    ),
+
+    snippet: $ => seq(
+      $.snippet_name,
+      '{',
+      // TODO: at least one non-empty_OR_comment-line should be inside
+      // repeat(choice(4-options)), repeat1(choice(matcher-or-directive)), repeat(choice(4-options))
+      // not too pretty...
+      repeat(choice(
+        $._empty_line,
+        $.comment_line,
+        $.matcher_definition,
+        $.directive_block
+      )),
+      optional($._vertical_whitespaces),
+      '}',
+      $._vertical_whitespace
+    ),
+
     // TODO: Are numbers allowed?
     snippet_name: $ => token(seq('(', /[\w-]*/, ')')),
-    // _definition: $ => choice(
-    //   $._directive_definition
-    // ),
-
-    // directive_definition: $ => seq(
-    //   $.directive_name,
-    //   $.block
-    // ),
-
-    // block: $ => seq(
-    //   '{',
-    //   repeat($.directive_option),
-    //   '}'
-    // ),
-    import: $ => seq(
-      'import',
-      choice(
-        $.snippet
-        // TODO: file import?
-      )
-    )
 
     
   }

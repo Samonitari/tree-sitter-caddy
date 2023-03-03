@@ -3,7 +3,7 @@
     "type": "directive_abort",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -29,7 +29,7 @@
     "type": "directive_bind",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -42,10 +42,10 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "unix_path",
+          "type": "network_address_wo_port",
           "named": true
         }
       ]
@@ -72,7 +72,15 @@
           "named": true
         },
         {
+          "type": "directive_file_server",
+          "named": true
+        },
+        {
           "type": "directive_handle",
+          "named": true
+        },
+        {
+          "type": "directive_handle_path",
           "named": true
         },
         {
@@ -80,7 +88,27 @@
           "named": true
         },
         {
+          "type": "directive_import",
+          "named": true
+        },
+        {
+          "type": "directive_log",
+          "named": true
+        },
+        {
           "type": "directive_redir",
+          "named": true
+        },
+        {
+          "type": "directive_request_body",
+          "named": true
+        },
+        {
+          "type": "directive_reverse_proxy",
+          "named": true
+        },
+        {
+          "type": "directive_root",
           "named": true
         },
         {
@@ -94,7 +122,7 @@
     "type": "directive_encode",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -121,10 +149,36 @@
     }
   },
   {
+    "type": "directive_file_server",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "file_server",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "directive_handle",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -137,8 +191,46 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "directive_block",
+          "named": true
+        },
+        {
+          "type": "matcher_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_handle_path",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "handle_path",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
         {
           "type": "directive_block",
           "named": true
@@ -154,7 +246,7 @@
     "type": "directive_header",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -170,6 +262,10 @@
       "required": false,
       "types": [
         {
+          "type": "comment_line",
+          "named": true
+        },
+        {
           "type": "field_manipulator",
           "named": true
         },
@@ -181,10 +277,74 @@
     }
   },
   {
+    "type": "directive_import",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "import",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "snippet_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_log",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "log",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "log_option_format",
+          "named": true
+        },
+        {
+          "type": "log_option_level",
+          "named": true
+        },
+        {
+          "type": "log_option_output",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "directive_redir",
     "named": true,
     "fields": {
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -211,6 +371,100 @@
     }
   },
   {
+    "type": "directive_request_body",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "request_body",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "size_number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_reverse_proxy",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "reverse_proxy",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "site_address",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_root",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "root",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "directive_tls",
     "named": true,
     "fields": {
@@ -224,7 +478,7 @@
           }
         ]
       },
-      "directive_name": {
+      "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -265,7 +519,15 @@
       "required": false,
       "types": [
         {
-          "type": "comment",
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "directive_import",
+          "named": true
+        },
+        {
+          "type": "global_options_block",
           "named": true
         },
         {
@@ -384,20 +646,136 @@
     }
   },
   {
-    "type": "header_value",
+    "type": "global_option_auto_https",
     "named": true,
-    "fields": {}
+    "fields": {
+      "global_option_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "auto_https",
+            "named": false
+          }
+        ]
+      }
+    }
   },
   {
-    "type": "import",
+    "type": "global_option_email",
     "named": true,
-    "fields": {},
+    "fields": {
+      "global_option_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "email",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "snippet",
+          "type": "email_address",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "global_options_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "global_option_auto_https",
+          "named": true
+        },
+        {
+          "type": "global_option_email",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "header_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "log_option_format",
+    "named": true,
+    "fields": {
+      "log_option_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "format",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "log_option_level",
+    "named": true,
+    "fields": {
+      "log_option_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "level",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "log_option_output",
+    "named": true,
+    "fields": {
+      "log_option_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "output",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "size_number",
+          "named": true
+        },
+        {
+          "type": "unix_path",
           "named": true
         }
       ]
@@ -412,6 +790,10 @@
       "required": true,
       "types": [
         {
+          "type": "comment_line",
+          "named": true
+        },
+        {
           "type": "matcher_name",
           "named": true
         },
@@ -420,6 +802,48 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "matcher_path",
+    "named": true,
+    "fields": {
+      "matcher_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "matcher_path_regexp",
+    "named": true,
+    "fields": {
+      "matcher_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path_regexp",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -432,6 +856,21 @@
       "types": [
         {
           "type": "matcher_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "network_address_wo_port",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "unix_path",
           "named": true
         }
       ]
@@ -509,15 +948,11 @@
       "required": true,
       "types": [
         {
-          "type": "comment",
+          "type": "comment_line",
           "named": true
         },
         {
           "type": "directive_block",
-          "named": true
-        },
-        {
-          "type": "import",
           "named": true
         },
         {
@@ -540,7 +975,7 @@
       "required": true,
       "types": [
         {
-          "type": "comment",
+          "type": "comment_line",
           "named": true
         },
         {
@@ -561,6 +996,25 @@
   {
     "type": "standard_matcher",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "matcher_path",
+          "named": true
+        },
+        {
+          "type": "matcher_path_regexp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "subdirective_name",
+    "named": true,
     "fields": {}
   },
   {
@@ -574,6 +1028,10 @@
   },
   {
     "type": "'",
+    "named": false
+  },
+  {
+    "type": "*",
     "named": false
   },
   {
@@ -609,7 +1067,23 @@
     "named": false
   },
   {
+    "type": "ERROR",
+    "named": false
+  },
+  {
+    "type": "INFO",
+    "named": false
+  },
+  {
     "type": "abort",
+    "named": false
+  },
+  {
+    "type": "auto_https",
+    "named": false
+  },
+  {
+    "type": "bcrypt",
     "named": false
   },
   {
@@ -617,16 +1091,40 @@
     "named": false
   },
   {
-    "type": "comment",
+    "type": "browse",
+    "named": false
+  },
+  {
+    "type": "comment_line",
     "named": true
+  },
+  {
+    "type": "console",
+    "named": false
   },
   {
     "type": "defer",
     "named": false
   },
   {
+    "type": "disable_certs",
+    "named": false
+  },
+  {
+    "type": "disable_redirects",
+    "named": false
+  },
+  {
+    "type": "discard",
+    "named": false
+  },
+  {
     "type": "domain_address",
     "named": true
+  },
+  {
+    "type": "email",
+    "named": false
   },
   {
     "type": "email_address",
@@ -637,11 +1135,19 @@
     "named": false
   },
   {
-    "type": "expression",
+    "type": "error",
     "named": false
   },
   {
     "type": "file",
+    "named": false
+  },
+  {
+    "type": "file_server",
+    "named": false
+  },
+  {
+    "type": "format",
     "named": false
   },
   {
@@ -669,14 +1175,6 @@
     "named": true
   },
   {
-    "type": "header_regexp",
-    "named": false
-  },
-  {
-    "type": "host",
-    "named": false
-  },
-  {
     "type": "html",
     "named": false
   },
@@ -689,7 +1187,15 @@
     "named": false
   },
   {
+    "type": "ignore_loaded_certs",
+    "named": false
+  },
+  {
     "type": "import",
+    "named": false
+  },
+  {
+    "type": "info",
     "named": false
   },
   {
@@ -701,7 +1207,19 @@
     "named": false
   },
   {
+    "type": "json",
+    "named": false
+  },
+  {
+    "type": "level",
+    "named": false
+  },
+  {
     "type": "localhost",
+    "named": false
+  },
+  {
+    "type": "log",
     "named": false
   },
   {
@@ -709,11 +1227,15 @@
     "named": true
   },
   {
-    "type": "method",
+    "type": "max_size",
     "named": false
   },
   {
-    "type": "not",
+    "type": "off",
+    "named": false
+  },
+  {
+    "type": "output",
     "named": false
   },
   {
@@ -733,28 +1255,60 @@
     "named": false
   },
   {
-    "type": "protocol",
-    "named": false
-  },
-  {
-    "type": "query",
-    "named": false
-  },
-  {
     "type": "redir",
     "named": false
   },
   {
-    "type": "remote_ip",
+    "type": "request_body",
     "named": false
+  },
+  {
+    "type": "reverse_proxy",
+    "named": false
+  },
+  {
+    "type": "roll_disabled",
+    "named": false
+  },
+  {
+    "type": "roll_keep",
+    "named": false
+  },
+  {
+    "type": "roll_keep_for_days",
+    "named": false
+  },
+  {
+    "type": "roll_local_time",
+    "named": false
+  },
+  {
+    "type": "roll_size",
+    "named": false
+  },
+  {
+    "type": "roll_uncompressed",
+    "named": false
+  },
+  {
+    "type": "root",
+    "named": false
+  },
+  {
+    "type": "size_number",
+    "named": true
   },
   {
     "type": "snippet_name",
     "named": true
   },
   {
-    "type": "subdirective_name",
-    "named": true
+    "type": "stderr",
+    "named": false
+  },
+  {
+    "type": "stdout",
+    "named": false
   },
   {
     "type": "tcp",
@@ -779,14 +1333,6 @@
   {
     "type": "uri_path_with_placeholders",
     "named": true
-  },
-  {
-    "type": "vars",
-    "named": false
-  },
-  {
-    "type": "vars_regexp",
-    "named": false
   },
   {
     "type": "zstd",
