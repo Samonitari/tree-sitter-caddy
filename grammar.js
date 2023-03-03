@@ -174,7 +174,7 @@ module.exports = grammar({
       // $.directive_request_header,
       // $.directive_respond,
       $.directive_reverse_proxy,
-      // $.directive_rewrite,
+      $.directive_rewrite,
       $.directive_root,
       $.directive_route,
       // $.directive_skip_log,
@@ -552,6 +552,13 @@ module.exports = grammar({
     _valid_uri_path_string: $ => /\/([\w\.\~\!\$\&'\(\)\*\+,;=:@\/-]|(%[0-9a-fA-F]{2}))*/,
       
     redir_code: $ => choice(/3\d\d/, '401', 'temporary', 'permanent', 'html'),
+
+    directive_rewrite: $ => seq(
+      field('directive_type', 'rewrite'),
+      $._horizontal_whitespaces,
+      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      $.redir_or_rewrite_target
+    ),
 
     directive_root: $ => seq(
       field('directive_type', 'root'),
