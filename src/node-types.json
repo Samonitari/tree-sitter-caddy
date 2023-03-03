@@ -119,6 +119,10 @@
           "named": true
         },
         {
+          "type": "directive_error",
+          "named": true
+        },
+        {
           "type": "directive_file_server",
           "named": true
         },
@@ -186,6 +190,40 @@
       "types": [
         {
           "type": "encode_format",
+          "named": true
+        },
+        {
+          "type": "matcher_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_error",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "error",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "http_error_code",
+          "named": true
+        },
+        {
+          "type": "http_message",
           "named": true
         },
         {
@@ -1256,6 +1294,14 @@
   {
     "type": "http://",
     "named": false
+  },
+  {
+    "type": "http_error_code",
+    "named": true
+  },
+  {
+    "type": "http_message",
+    "named": true
   },
   {
     "type": "https://",

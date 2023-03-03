@@ -25,7 +25,7 @@ The following directives are **at least partially\*** handled.
 - [x] `basicauth`
 - [x] `bind`
 - [x] `encode`
-- [ ] `error`
+- [x] `error`
 - [x] `file_server`
 - [ ] `forward_auth`
 - [x] `handle`

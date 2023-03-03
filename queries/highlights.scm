@@ -26,11 +26,15 @@
   (header_value)
   (unix_path)
   (email_address)
+  (http_message)
 ] @string
 
 (comment_line) @comment
 
-(size_number) @number
+[
+  (http_error_code)
+  (size_number)
+] @number
 
 (site_address) @constant
 
