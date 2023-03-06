@@ -42,7 +42,7 @@ The following directives are **at least partially\*** handled.
 - [x] `redir`
 - [x] `request_body`
 - [ ] `request_header`
-- [ ] `respond`
+- [x] `respond`
 - [x] `reverse_proxy`
 - [x] `rewrite`
 - [x] `root`
