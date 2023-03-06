@@ -53,6 +53,7 @@ module.exports = grammar({
     site_block: $ => seq(
       // TODO: repeatable path
       $.site_address,
+      optional(repeat(seq(',', $._horizontal_whitespaces, $.site_address))),
       // TODO: single site block doesn't require '{}' delimiting
       '{',
       repeat(choice(
@@ -172,7 +173,7 @@ module.exports = grammar({
       $.directive_redir,
       $.directive_request_body,
       // $.directive_request_header,
-      // $.directive_respond,
+      $.directive_respond,
       $.directive_reverse_proxy,
       $.directive_rewrite,
       $.directive_root,
@@ -305,20 +306,33 @@ module.exports = grammar({
     
     directive_error: $ => seq(
       field('directive_type', 'error'),
-      $._horizontal_whitespaces,
-      optional(seq($.matcher_token, $._horizontal_whitespaces)),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
       choice(
         seq(
-          optional(seq($.http_message, $._horizontal_whitespaces)),
-          $.http_error_code,
+          optional(seq($._horizontal_whitespaces, $.http_message)),
+          optional(seq($._horizontal_whitespaces, $.http_status_code)),
+          $._vertical_whitespace
         ),
-        // TODO: message in block option
+        seq(
+          optional($.http_error_code),
+          '{',
+          repeat1(choice(
+            $._empty_line,
+            $.comment_line,
+            seq(
+              field('respond_or_error_option_message', 'message'),
+              $._horizontal_whitespaces,
+              field('respond_or_error_message', $.http_message),
+            ),
+          )),
+          '}'
+        )
       )
     ),
 
-    http_message: $ => /"[\w -]+"/,
+    http_message: $ => choice(/"[\w -]+"/, /`[\w\{\}\[\]\/:,\." -]+`/),
 
-    http_error_code: $ => /\d{3}/,
+    http_error_code: $ => /[4|5]\d{2}/,
 
     directive_handle: $ => seq(
       field('directive_type', 'handle'),
@@ -498,10 +512,10 @@ module.exports = grammar({
     
     directive_redir: $ => seq(
       field('directive_type', 'redir'),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
       $._horizontal_whitespaces,
-      optional(seq($.matcher_token, $._horizontal_whitespaces)),
       $.redir_or_rewrite_target,
-      optional($.redir_code)
+      optional(seq($._horizontal_whitespaces, $.redir_code))
     ),
 
     directive_request_body: $ => seq(
@@ -531,6 +545,35 @@ module.exports = grammar({
       )),
       field('uri_path_target', $.uri_path_with_placeholders)
     ),
+
+    directive_respond: $ => seq(
+      field('directive_type', 'respond'),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
+      choice(
+        seq(
+          optional(seq($._horizontal_whitespaces, $.http_message)),
+          optional(seq($._horizontal_whitespaces, $.http_status_code)),
+          $._vertical_whitespace
+        ),
+        seq(
+          optional(seq($._horizontal_whitespaces, $.http_status_code)),
+          '{',
+          repeat1(choice(
+            $._empty_line,
+            $.comment_line,
+            seq(
+              field('respond_or_error_option_message', 'message'),
+              $._horizontal_whitespaces,
+              field('respond_or_error_message', $.http_message),
+            ),
+            field('respond_option_close', 'close')
+          )),
+          '}'
+        )
+      )
+    ),
+
+    http_status_code: $ => /\d{3}/,
 
     directive_reverse_proxy: $ => seq(
       field('directive_type', 'reverse_proxy'),
