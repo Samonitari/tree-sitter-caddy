@@ -266,12 +266,8 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PREC",
-          "value": 2,
-          "content": {
-            "type": "STRING",
-            "value": "localhost"
-          }
+          "type": "STRING",
+          "value": "localhost"
         },
         {
           "type": "SYMBOL",
@@ -466,8 +462,12 @@
           ]
         },
         {
-          "type": "PATTERN",
-          "value": "\\S+"
+          "type": "FIELD",
+          "name": "path_regexp_matcher_value",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\S+"
+          }
         }
       ]
     },
@@ -517,6 +517,10 @@
         {
           "type": "SYMBOL",
           "name": "directive_log"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "directive_php_fastcgi"
         },
         {
           "type": "SYMBOL",
@@ -827,6 +831,67 @@
             {
               "type": "SYMBOL",
               "name": "_ipv6_address"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "unix_path"
+            }
+          ]
+        }
+      ]
+    },
+    "network_address_optional_port": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_network"
+                },
+                {
+                  "type": "STRING",
+                  "value": "/"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ipv4_address"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_port_number"
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_ipv6_address"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_port_number"
+                }
+              ]
             },
             {
               "type": "SYMBOL",
@@ -2089,6 +2154,242 @@
               "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "directive_php_fastcgi": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "php_fastcgi"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "matcher_token"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "network_address_optional_port"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "{"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_empty_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "comment_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_root"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_split"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_env"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_index"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_try_files"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reverse_proxy_option_header_up"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reverse_proxy_option_header_down"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "}"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "fastcgi_option_root": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "root"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "unix_path"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_split": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "split"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\S+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_env": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "env"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\S+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\S+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_index": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "index"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "off"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "unix_path"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_try_files": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "try_files"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "unix_path"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
         }
       ]
     },
@@ -2450,10 +2751,6 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_horizontal_whitespaces"
-        },
-        {
           "type": "CHOICE",
           "members": [
             {
@@ -2461,11 +2758,11 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "matcher_token"
+                  "name": "_horizontal_whitespaces"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_horizontal_whitespaces"
+                  "name": "matcher_token"
                 }
               ]
             },
@@ -2475,15 +2772,98 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "site_address"
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_horizontal_whitespaces"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "site_address"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "network_address_optional_port"
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "REPEAT",
-              "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                },
+                {
+                  "type": "STRING",
+                  "value": "{"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_empty_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "comment_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reverse_proxy_option_trusted_proxies"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reverse_proxy_option_header_up"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reverse_proxy_option_header_down"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "}"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "reverse_proxy_option_trusted_proxies": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "trusted_proxies"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
                 "type": "SEQ",
                 "members": [
                   {
@@ -2492,15 +2872,113 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "site_address"
+                    "name": "_ipv4_address"
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_horizontal_whitespaces"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_ipv6_address"
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_horizontal_whitespaces"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_ipv4_address"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "-"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_ipv4_address"
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_horizontal_whitespaces"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_ipv6_address"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "-"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_ipv6_address"
                   }
                 ]
               }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "reverse_proxy_option_header_up": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "header_up"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "field_manipulator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "reverse_proxy_option_header_down": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "header_down"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "field_manipulator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
         }
       ]
     },
@@ -2511,6 +2989,10 @@
         "content": {
           "type": "CHOICE",
           "members": [
+            {
+              "type": "STRING",
+              "value": "/"
+            },
             {
               "type": "PATTERN",
               "value": "([\\w\\.\\~\\!\\$\\&'\\(\\)\\*\\+,;=:@-]|(%[0-9a-fA-F]{2}))+"

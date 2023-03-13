@@ -37,7 +37,7 @@ The following directives are **at least partially\*** handled.
 - [ ] `map`
 - [ ] `method`
 - [ ] `metrics`
-- [ ] `php_fastcgi`
+- [x] `php_fastcgi`
 - [ ] `push`
 - [x] `redir`
 - [x] `request_body`
