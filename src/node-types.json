@@ -147,6 +147,10 @@
           "named": true
         },
         {
+          "type": "directive_php_fastcgi",
+          "named": true
+        },
+        {
           "type": "directive_redir",
           "named": true
         },
@@ -480,6 +484,68 @@
     }
   },
   {
+    "type": "directive_php_fastcgi",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "php_fastcgi",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "fastcgi_option_env",
+          "named": true
+        },
+        {
+          "type": "fastcgi_option_index",
+          "named": true
+        },
+        {
+          "type": "fastcgi_option_root",
+          "named": true
+        },
+        {
+          "type": "fastcgi_option_split",
+          "named": true
+        },
+        {
+          "type": "fastcgi_option_try_files",
+          "named": true
+        },
+        {
+          "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "network_address_optional_port",
+          "named": true
+        },
+        {
+          "type": "reverse_proxy_option_header_down",
+          "named": true
+        },
+        {
+          "type": "reverse_proxy_option_header_up",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "directive_redir",
     "named": true,
     "fields": {
@@ -635,7 +701,27 @@
       "required": true,
       "types": [
         {
+          "type": "comment_line",
+          "named": true
+        },
+        {
           "type": "matcher_token",
+          "named": true
+        },
+        {
+          "type": "network_address_optional_port",
+          "named": true
+        },
+        {
+          "type": "reverse_proxy_option_header_down",
+          "named": true
+        },
+        {
+          "type": "reverse_proxy_option_header_up",
+          "named": true
+        },
+        {
+          "type": "reverse_proxy_option_trusted_proxies",
           "named": true
         },
         {
@@ -820,6 +906,61 @@
     "type": "encode_format",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "fastcgi_option_env",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "fastcgi_option_index",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "fastcgi_option_root",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "fastcgi_option_split",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "fastcgi_option_try_files",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "field_add_or_set",
@@ -1152,6 +1293,21 @@
     }
   },
   {
+    "type": "network_address_optional_port",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "unix_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "network_address_wo_port",
     "named": true,
     "fields": {},
@@ -1209,6 +1365,41 @@
         ]
       }
     }
+  },
+  {
+    "type": "reverse_proxy_option_header_down",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_manipulator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "reverse_proxy_option_header_up",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_manipulator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "reverse_proxy_option_trusted_proxies",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "site_address",
@@ -1437,6 +1628,10 @@
     "named": false
   },
   {
+    "type": "env",
+    "named": false
+  },
+  {
     "type": "error",
     "named": false
   },
@@ -1473,6 +1668,14 @@
     "named": false
   },
   {
+    "type": "header_down",
+    "named": false
+  },
+  {
+    "type": "header_up",
+    "named": false
+  },
+  {
     "type": "html",
     "named": false
   },
@@ -1498,6 +1701,10 @@
   },
   {
     "type": "import",
+    "named": false
+  },
+  {
+    "type": "index",
     "named": false
   },
   {
@@ -1565,6 +1772,10 @@
     "named": false
   },
   {
+    "type": "php_fastcgi",
+    "named": false
+  },
+  {
     "type": "redir",
     "named": false
   },
@@ -1625,6 +1836,10 @@
     "named": true
   },
   {
+    "type": "split",
+    "named": false
+  },
+  {
     "type": "stderr",
     "named": false
   },
@@ -1642,6 +1857,14 @@
   },
   {
     "type": "tls",
+    "named": false
+  },
+  {
+    "type": "trusted_proxies",
+    "named": false
+  },
+  {
+    "type": "try_files",
     "named": false
   },
   {

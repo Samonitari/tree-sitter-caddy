@@ -88,7 +88,7 @@ module.exports = grammar({
     ),
 
     _ip_or_domain_address: $ => choice(
-        prec(2, 'localhost'),
+        'localhost',
         $._ipv4_address,
         $._ipv6_address,
         $.domain_address
@@ -147,7 +147,7 @@ module.exports = grammar({
       field('matcher_type', 'path_regexp'),
       $._horizontal_whitespaces,
       optional(seq(field('path_regexp_matcher_name', /\w+/), $._horizontal_whitespaces)),
-      /\S+/
+      field('path_regexp_matcher_value', /\S+/)
     ),
     
     directive_block: $ => choice(    
@@ -168,7 +168,7 @@ module.exports = grammar({
       // $.directive_map,
       // $.directive_method,
       // $.directive_metrics,
-      // $.directive_php_fastcgi,
+      $.directive_php_fastcgi,
       // $.directive_push,
       $.directive_redir,
       $.directive_request_body,
@@ -247,6 +247,18 @@ module.exports = grammar({
         $._ipv4_address,
         $._ipv6_address,
         // TODO unix socket properly
+        $.unix_path
+      )
+    ),
+
+    network_address_optional_port: $ => seq(
+      optional(seq(
+        $._network,
+        '/'
+      )),
+      choice(
+        seq($._ipv4_address, $._port_number),
+        seq($._ipv6_address, $._port_number),
         $.unix_path
       )
     ),
@@ -515,8 +527,40 @@ module.exports = grammar({
       optional(seq($._horizontal_whitespaces, $.matcher_token)),
       $._horizontal_whitespaces,
       $.redir_or_rewrite_target,
-      optional(seq($._horizontal_whitespaces, $.redir_code))
+      optional(seq($._horizontal_whitespaces, $.redir_code)),
+      $._vertical_whitespace
     ),
+
+    directive_php_fastcgi: $ => seq(
+      field('directive_type', 'php_fastcgi'),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
+      $._horizontal_whitespaces,
+      $.network_address_optional_port,
+      optional(seq(
+        '{',
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          $.fastcgi_option_root,
+          $.fastcgi_option_split,
+          $.fastcgi_option_env,
+          $.fastcgi_option_index,
+          $.fastcgi_option_try_files,
+          $.reverse_proxy_option_header_up,
+          $.reverse_proxy_option_header_down
+        )),
+        '}',
+      ))
+    ),
+
+    fastcgi_option_root: $ => seq('root', $._horizontal_whitespaces, $.unix_path, $._vertical_whitespace),
+    fastcgi_option_split: $ => seq('split', $._horizontal_whitespaces, /\S+/, $._vertical_whitespace),
+    fastcgi_option_env: $ => seq('env', $._horizontal_whitespaces, /\S+/, $._horizontal_whitespaces, /\S+/, $._vertical_whitespace),
+    fastcgi_option_index: $ => seq('index', $._horizontal_whitespaces, choice('off', $.unix_path), $._vertical_whitespace),
+    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
+    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
+    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
+    // TODO: add placeholder
 
     directive_request_body: $ => seq(
       field('directive_type', 'request_body'),
@@ -577,16 +621,41 @@ module.exports = grammar({
 
     directive_reverse_proxy: $ => seq(
       field('directive_type', 'reverse_proxy'),
-      $._horizontal_whitespaces,
-      optional(seq($.matcher_token, $._horizontal_whitespaces)),
-      $.site_address,
-      optional(repeat(seq($._horizontal_whitespaces, $.site_address)))
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
+      repeat1(seq($._horizontal_whitespaces, choice($.site_address, $.network_address_optional_port))),
       // TODO: multiple address, and options block
+      optional(seq(
+        $._horizontal_whitespaces,
+        '{',
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          $.reverse_proxy_option_trusted_proxies,
+          $.reverse_proxy_option_header_up,
+          $.reverse_proxy_option_header_down
+        )),
+        '}'
+      ))
     ),
+
+    reverse_proxy_option_trusted_proxies: $ => seq(
+      'trusted_proxies',
+      repeat1(choice(
+        seq($._horizontal_whitespaces, $._ipv4_address),
+        seq($._horizontal_whitespaces, $._ipv6_address),
+        seq($._horizontal_whitespaces, $._ipv4_address, '-', $._ipv4_address),
+        seq($._horizontal_whitespaces, $._ipv6_address, '-', $._ipv6_address)
+      )),
+      $._vertical_whitespace
+    ),
+
+    reverse_proxy_option_header_up: $ => seq('header_up', $._horizontal_whitespaces, $.field_manipulator, $._vertical_whitespace),
+    reverse_proxy_option_header_down: $ => seq('header_down', $._horizontal_whitespaces, $.field_manipulator, $._vertical_whitespace),
     
     // TODO: When can/must start with leading '/'?
     uri_path_with_placeholders: $ => token(repeat1(
       choice(
+        '/',
         /([\w\.\~\!\$\&'\(\)\*\+,;=:@-]|(%[0-9a-fA-F]{2}))+/,
         /\{[a-z\.]+\}/,
       )
