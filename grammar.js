@@ -332,7 +332,7 @@ module.exports = grammar({
             $._empty_line,
             $.comment_line,
             seq(
-              field('respond_or_error_option_message', 'message'),
+              field('directive_option_name', 'message'),
               $._horizontal_whitespaces,
               field('respond_or_error_message', $.http_message),
             ),
@@ -471,7 +471,7 @@ module.exports = grammar({
     ),
 
     log_option_output: $ => seq(
-      field('log_option_type', 'output'),
+      field('directive_option_name', 'output'),
       $._horizontal_whitespaces,
       choice(
         seq(choice('stderr', 'stdout', 'discard'), $._vertical_whitespace),
@@ -480,7 +480,7 @@ module.exports = grammar({
     ),
 
     _log_output_file: $ => seq(
-      'file',
+      field('directive_option_fixed_value','file'),
       $._horizontal_whitespaces,
       $.unix_path,
       choice(
@@ -506,19 +506,19 @@ module.exports = grammar({
     size_number: $ => /\d+(\.\d+)?[a-zA-Z]*/,
 
     log_option_format: $ => seq(
-      field('log_option_type', 'format'),
+      field('directive_option_name', 'format'),
       $._horizontal_whitespaces,
       choice(
-        seq(choice('console', 'json'), $._vertical_whitespace),
+        seq(field('directive_option_fixed_value', choice('console', 'json')), $._vertical_whitespace),
         //TODO: filter format module
       ),
       // TODO: format options
     ),
 
     log_option_level: $ => seq(
-      field('log_option_type', 'level'),
+      field('directive_option_name', 'level'),
       $._horizontal_whitespaces,
-      choice('INFO', 'info', 'ERROR', 'error'),
+      field('directive_option_fixed_value', choice('INFO', 'info', 'ERROR', 'error')),
       $._vertical_whitespace
     ),
     
@@ -558,19 +558,19 @@ module.exports = grammar({
       ))
     ),
 
-    fastcgi_option_root: $ => seq(field('php_fastcgi_option_name', 'root'),
+    fastcgi_option_root: $ => seq(field('directive_option_name', 'root'),
       $._horizontal_whitespaces,
       $.unix_path,
       $._vertical_whitespace
     ),
 
-    fastcgi_option_split: $ => seq(field('php_fastcgi_option_name', 'split'),
+    fastcgi_option_split: $ => seq(field('directive_option_name', 'split'),
       $._horizontal_whitespaces,
       /\S+/,
       $._vertical_whitespace
     ),
 
-    fastcgi_option_env: $ => seq(field('php_fastcgi_option_name', 'env'),
+    fastcgi_option_env: $ => seq(field('directive_option_name', 'env'),
       $._horizontal_whitespaces,
       /\S+/,
       $._horizontal_whitespaces,
@@ -578,35 +578,35 @@ module.exports = grammar({
       $._vertical_whitespace
     ),
 
-    fastcgi_option_index: $ => seq(field('php_fastcgi_option_name', 'index'),
+    fastcgi_option_index: $ => seq(field('directive_option_name', 'index'),
       $._horizontal_whitespaces,
       choice('off', $.unix_path),
       $._vertical_whitespace
     ),
 
-    fastcgi_option_try_files: $ => seq(field('php_fastcgi_option_name', 'try_files'),
+    fastcgi_option_try_files: $ => seq(field('directive_option_name', 'try_files'),
       $._horizontal_whitespaces,
       repeat1($.unix_path), // TODO: add placeholder
       $._vertical_whitespace
     ),
 
-    fastcgi_option_resolve_root_symlink: $ => seq(field('php_fastcgi_option_name', 'resolve_root_symlink'), $._vertical_whitespace),
+    fastcgi_option_resolve_root_symlink: $ => seq(field('directive_option_name', 'resolve_root_symlink'), $._vertical_whitespace),
     
-    fastcgi_option_capture_stderr: $ => seq(field('php_fastcgi_option_name', 'capture_stderr'), $._vertical_whitespace),
+    fastcgi_option_capture_stderr: $ => seq(field('directive_option_name', 'capture_stderr'), $._vertical_whitespace),
     
-    fastcgi_option_dial_timeout: $ => seq(field('php_fastcgi_option_name', 'dial_timeout'),
+    fastcgi_option_dial_timeout: $ => seq(field('directive_option_name', 'dial_timeout'),
       $._horizontal_whitespaces,
       $.duration_value,
       $._vertical_whitespace
     ),
     
-    fastcgi_option_read_timeout: $ => seq(field('php_fastcgi_option_name', 'read_timeout'),
+    fastcgi_option_read_timeout: $ => seq(field('directive_option_name', 'read_timeout'),
       $._horizontal_whitespaces,
       $.duration_value,
       $._vertical_whitespace
     ),
     
-    fastcgi_option_write_timeout: $ => seq(field('php_fastcgi_option_name', 'write_timeout'),
+    fastcgi_option_write_timeout: $ => seq(field('directive_option_name', 'write_timeout'),
       $._horizontal_whitespaces,
       $.duration_value,
       $._vertical_whitespace
@@ -633,7 +633,7 @@ module.exports = grammar({
       '}',
     ),
 
-    request_body_option_max_size: $ => seq(field('request_body_option_name', 'max_size'), $.size_number, $._vertical_whitespace),
+    request_body_option_max_size: $ => seq(field('directive_option_name', 'max_size'), $.size_number, $._vertical_whitespace),
     
     redir_or_rewrite_target: $ => choice(
       field('address_target', seq(
@@ -660,11 +660,11 @@ module.exports = grammar({
             $._empty_line,
             $.comment_line,
             seq(
-              field('respond_or_error_option_message', 'message'),
+              field('directive_option_name', 'body'),
               $._horizontal_whitespaces,
               field('respond_or_error_message', $.http_message),
             ),
-            field('respond_option_close', 'close')
+            field('directive_option_name', 'close')
           )),
           '}'
         )
@@ -693,7 +693,7 @@ module.exports = grammar({
     ),
 
     reverse_proxy_option_trusted_proxies: $ => seq(
-      field('reverse_proxy_option_name', 'trusted_proxies'),
+      field('directive_option_name', 'trusted_proxies'),
       repeat1(choice(
         seq($._horizontal_whitespaces, $._ipv4_address),
         seq($._horizontal_whitespaces, $._ipv6_address),
@@ -704,12 +704,12 @@ module.exports = grammar({
     ),
 
     reverse_proxy_option_header_up: $ => seq(field(
-      'reverse_proxy_option_name', 'header_up'),
+      'directive_option_name', 'header_up'),
       $._horizontal_whitespaces,
       $.field_manipulator, $._vertical_whitespace
     ),
     
-    reverse_proxy_option_header_down: $ => seq(field('reverse_proxy_option_name', 'header_down'),
+    reverse_proxy_option_header_down: $ => seq(field('directive_option_name', 'header_down'),
       $._horizontal_whitespaces,
       $.field_manipulator,
       $._vertical_whitespace

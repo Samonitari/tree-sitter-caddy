@@ -1,26 +1,37 @@
+[
+  (http_error_code)
+  (http_status_code)
+  (size_number)
+] @number
+
 (snippet_name) @function
 
 (_ directive_type: _ @keyword)
 
-(_ log_option_type: _ @function.method)
 
-(_ file_server_option_browse: _ @function.method)
+; (_ respond_or_error_option_message: _ @function.method)
 
 (_ matcher_type: _ @function.macro)
 
-[
-  "max_size"
-  ; global options
-  "email"
-  "auto_https"
-] @function.method
+; (_ basicauth_user_name: _ @string)
+; (_ basicauth_user_pass: _ @string)
+; (_ basicauth_user_pass_saltb64: _ @string)
+; (_ respond_or_error_message: _ @string)
+
+(_ path_regexp_matcher_value: _ @string)
+
+(_ global_option_type: _ @function.method)
+
+(_ directive_option_name: _ @function.method)
+
+(_ directive_option_fixed_value: _ @variable.parameter)
 
 [
   (matcher_name)
   (matcher_token)
 ] @tag
 
-(header_name) @string.special
+(header_name) @variable.parameter
 
 [
   (header_value)
@@ -30,11 +41,6 @@
 ] @string
 
 (comment_line) @comment
-
-[
-  (http_error_code)
-  (size_number)
-] @number
 
 (site_address) @constant
 

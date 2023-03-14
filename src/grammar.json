@@ -1308,7 +1308,7 @@
                         "members": [
                           {
                             "type": "FIELD",
-                            "name": "respond_or_error_option_message",
+                            "name": "directive_option_name",
                             "content": {
                               "type": "STRING",
                               "value": "message"
@@ -1835,7 +1835,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "log_option_type",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "output"
@@ -1886,8 +1886,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "file"
+          "type": "FIELD",
+          "name": "directive_option_fixed_value",
+          "content": {
+            "type": "STRING",
+            "value": "file"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2013,7 +2017,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "log_option_type",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "format"
@@ -2030,17 +2034,21 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "console"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "json"
-                    }
-                  ]
+                  "type": "FIELD",
+                  "name": "directive_option_fixed_value",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "console"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "json"
+                      }
+                    ]
+                  }
                 },
                 {
                   "type": "SYMBOL",
@@ -2057,7 +2065,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "log_option_type",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "level"
@@ -2068,25 +2076,29 @@
           "name": "_horizontal_whitespaces"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "INFO"
-            },
-            {
-              "type": "STRING",
-              "value": "info"
-            },
-            {
-              "type": "STRING",
-              "value": "ERROR"
-            },
-            {
-              "type": "STRING",
-              "value": "error"
-            }
-          ]
+          "type": "FIELD",
+          "name": "directive_option_fixed_value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "INFO"
+              },
+              {
+                "type": "STRING",
+                "value": "info"
+              },
+              {
+                "type": "STRING",
+                "value": "ERROR"
+              },
+              {
+                "type": "STRING",
+                "value": "error"
+              }
+            ]
+          }
         },
         {
           "type": "SYMBOL",
@@ -2293,7 +2305,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "root"
@@ -2318,7 +2330,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "split"
@@ -2343,7 +2355,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "env"
@@ -2376,7 +2388,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "index"
@@ -2410,7 +2422,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "try_files"
@@ -2438,7 +2450,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "resolve_root_symlink"
@@ -2455,7 +2467,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "capture_stderr"
@@ -2472,7 +2484,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "dial_timeout"
@@ -2497,7 +2509,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "read_timeout"
@@ -2522,7 +2534,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "php_fastcgi_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "write_timeout"
@@ -2661,7 +2673,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "request_body_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "max_size"
@@ -2859,10 +2871,10 @@
                         "members": [
                           {
                             "type": "FIELD",
-                            "name": "respond_or_error_option_message",
+                            "name": "directive_option_name",
                             "content": {
                               "type": "STRING",
-                              "value": "message"
+                              "value": "body"
                             }
                           },
                           {
@@ -2881,7 +2893,7 @@
                       },
                       {
                         "type": "FIELD",
-                        "name": "respond_option_close",
+                        "name": "directive_option_name",
                         "content": {
                           "type": "STRING",
                           "value": "close"
@@ -3021,7 +3033,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "reverse_proxy_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "trusted_proxies"
@@ -3114,7 +3126,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "reverse_proxy_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "header_up"
@@ -3139,7 +3151,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "reverse_proxy_option_name",
+          "name": "directive_option_name",
           "content": {
             "type": "STRING",
             "value": "header_down"
