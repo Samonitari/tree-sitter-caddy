@@ -219,6 +219,16 @@
     "type": "directive_error",
     "named": true,
     "fields": {
+      "directive_option_name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "message",
+            "named": false
+          }
+        ]
+      },
       "directive_type": {
         "multiple": false,
         "required": true,
@@ -236,16 +246,6 @@
           {
             "type": "http_message",
             "named": true
-          }
-        ]
-      },
-      "respond_or_error_option_message": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "message",
-            "named": false
           }
         ]
       }
@@ -637,22 +637,26 @@
     "type": "directive_respond",
     "named": true,
     "fields": {
+      "directive_option_name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "body",
+            "named": false
+          },
+          {
+            "type": "close",
+            "named": false
+          }
+        ]
+      },
       "directive_type": {
         "multiple": false,
         "required": true,
         "types": [
           {
             "type": "respond",
-            "named": false
-          }
-        ]
-      },
-      "respond_option_close": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "close",
             "named": false
           }
         ]
@@ -664,16 +668,6 @@
           {
             "type": "http_message",
             "named": true
-          }
-        ]
-      },
-      "respond_or_error_option_message": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "message",
-            "named": false
           }
         ]
       }
@@ -931,7 +925,7 @@
     "type": "fastcgi_option_capture_stderr",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -947,7 +941,7 @@
     "type": "fastcgi_option_dial_timeout",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -973,7 +967,7 @@
     "type": "fastcgi_option_env",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -989,7 +983,7 @@
     "type": "fastcgi_option_index",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1015,7 +1009,7 @@
     "type": "fastcgi_option_read_timeout",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1041,7 +1035,7 @@
     "type": "fastcgi_option_resolve_root_symlink",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1057,7 +1051,7 @@
     "type": "fastcgi_option_root",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1083,7 +1077,7 @@
     "type": "fastcgi_option_split",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1099,7 +1093,7 @@
     "type": "fastcgi_option_try_files",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1125,7 +1119,7 @@
     "type": "fastcgi_option_write_timeout",
     "named": true,
     "fields": {
-      "php_fastcgi_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1335,7 +1329,21 @@
     "type": "log_option_format",
     "named": true,
     "fields": {
-      "log_option_type": {
+      "directive_option_fixed_value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "console",
+            "named": false
+          },
+          {
+            "type": "json",
+            "named": false
+          }
+        ]
+      },
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1351,7 +1359,29 @@
     "type": "log_option_level",
     "named": true,
     "fields": {
-      "log_option_type": {
+      "directive_option_fixed_value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "ERROR",
+            "named": false
+          },
+          {
+            "type": "INFO",
+            "named": false
+          },
+          {
+            "type": "error",
+            "named": false
+          },
+          {
+            "type": "info",
+            "named": false
+          }
+        ]
+      },
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1367,7 +1397,17 @@
     "type": "log_option_output",
     "named": true,
     "fields": {
-      "log_option_type": {
+      "directive_option_fixed_value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "file",
+            "named": false
+          }
+        ]
+      },
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1555,7 +1595,7 @@
     "type": "request_body_option_max_size",
     "named": true,
     "fields": {
-      "request_body_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1581,7 +1621,7 @@
     "type": "reverse_proxy_option_header_down",
     "named": true,
     "fields": {
-      "reverse_proxy_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1607,7 +1647,7 @@
     "type": "reverse_proxy_option_header_up",
     "named": true,
     "fields": {
-      "reverse_proxy_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1633,7 +1673,7 @@
     "type": "reverse_proxy_option_trusted_proxies",
     "named": true,
     "fields": {
-      "reverse_proxy_option_name": {
+      "directive_option_name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1821,6 +1861,10 @@
   },
   {
     "type": "bind",
+    "named": false
+  },
+  {
+    "type": "body",
     "named": false
   },
   {
