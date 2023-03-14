@@ -277,10 +277,10 @@ module.exports = grammar({
     unix_path: $ => choice(
       seq(
         '"',
-        /[\w\s\/]+/,
+        /[\w\s\/\.\*-]+/,
         '"'
       ),
-      /[\w\/\.-]+/
+      /[\w\/\.\*-]+/
     ),
 
     directive_encode: $ => seq(
@@ -546,6 +546,11 @@ module.exports = grammar({
           $.fastcgi_option_env,
           $.fastcgi_option_index,
           $.fastcgi_option_try_files,
+          $.fastcgi_option_resolve_root_symlink,
+          $.fastcgi_option_dial_timeout,
+          $.fastcgi_option_read_timeout,
+          $.fastcgi_option_write_timeout,
+          $.fastcgi_option_capture_stderr,
           $.reverse_proxy_option_header_up,
           $.reverse_proxy_option_header_down
         )),
@@ -553,14 +558,61 @@ module.exports = grammar({
       ))
     ),
 
-    fastcgi_option_root: $ => seq('root', $._horizontal_whitespaces, $.unix_path, $._vertical_whitespace),
-    fastcgi_option_split: $ => seq('split', $._horizontal_whitespaces, /\S+/, $._vertical_whitespace),
-    fastcgi_option_env: $ => seq('env', $._horizontal_whitespaces, /\S+/, $._horizontal_whitespaces, /\S+/, $._vertical_whitespace),
-    fastcgi_option_index: $ => seq('index', $._horizontal_whitespaces, choice('off', $.unix_path), $._vertical_whitespace),
-    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
-    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
-    fastcgi_option_try_files: $ => seq('try_files', $._horizontal_whitespaces, repeat1($.unix_path), $._vertical_whitespace),
-    // TODO: add placeholder
+    fastcgi_option_root: $ => seq(field('php_fastcgi_option_name', 'root'),
+      $._horizontal_whitespaces,
+      $.unix_path,
+      $._vertical_whitespace
+    ),
+
+    fastcgi_option_split: $ => seq(field('php_fastcgi_option_name', 'split'),
+      $._horizontal_whitespaces,
+      /\S+/,
+      $._vertical_whitespace
+    ),
+
+    fastcgi_option_env: $ => seq(field('php_fastcgi_option_name', 'env'),
+      $._horizontal_whitespaces,
+      /\S+/,
+      $._horizontal_whitespaces,
+      /\S+/,
+      $._vertical_whitespace
+    ),
+
+    fastcgi_option_index: $ => seq(field('php_fastcgi_option_name', 'index'),
+      $._horizontal_whitespaces,
+      choice('off', $.unix_path),
+      $._vertical_whitespace
+    ),
+
+    fastcgi_option_try_files: $ => seq(field('php_fastcgi_option_name', 'try_files'),
+      $._horizontal_whitespaces,
+      repeat1($.unix_path), // TODO: add placeholder
+      $._vertical_whitespace
+    ),
+
+    fastcgi_option_resolve_root_symlink: $ => seq(field('php_fastcgi_option_name', 'resolve_root_symlink'), $._vertical_whitespace),
+    
+    fastcgi_option_capture_stderr: $ => seq(field('php_fastcgi_option_name', 'capture_stderr'), $._vertical_whitespace),
+    
+    fastcgi_option_dial_timeout: $ => seq(field('php_fastcgi_option_name', 'dial_timeout'),
+      $._horizontal_whitespaces,
+      $.duration_value,
+      $._vertical_whitespace
+    ),
+    
+    fastcgi_option_read_timeout: $ => seq(field('php_fastcgi_option_name', 'read_timeout'),
+      $._horizontal_whitespaces,
+      $.duration_value,
+      $._vertical_whitespace
+    ),
+    
+    fastcgi_option_write_timeout: $ => seq(field('php_fastcgi_option_name', 'write_timeout'),
+      $._horizontal_whitespaces,
+      $.duration_value,
+      $._vertical_whitespace
+    ),
+
+    duration_value: $ => /[0-9\.]+(((n|u|m)?s)|m|h|d)/,
 
     directive_request_body: $ => seq(
       field('directive_type', 'request_body'),
@@ -572,7 +624,7 @@ module.exports = grammar({
         $.comment_line,
       ))),
       // TODO: validate size literal?
-      seq('max_size', $.size_number),
+      $.request_body_option_max_size,
       optional(repeat(choice(
         $._empty_line,
         $.comment_line,
@@ -580,6 +632,8 @@ module.exports = grammar({
       optional($._vertical_whitespace),
       '}',
     ),
+
+    request_body_option_max_size: $ => seq(field('request_body_option_name', 'max_size'), $.size_number, $._vertical_whitespace),
     
     redir_or_rewrite_target: $ => choice(
       field('address_target', seq(
@@ -639,7 +693,7 @@ module.exports = grammar({
     ),
 
     reverse_proxy_option_trusted_proxies: $ => seq(
-      'trusted_proxies',
+      field('reverse_proxy_option_name', 'trusted_proxies'),
       repeat1(choice(
         seq($._horizontal_whitespaces, $._ipv4_address),
         seq($._horizontal_whitespaces, $._ipv6_address),
@@ -649,8 +703,17 @@ module.exports = grammar({
       $._vertical_whitespace
     ),
 
-    reverse_proxy_option_header_up: $ => seq('header_up', $._horizontal_whitespaces, $.field_manipulator, $._vertical_whitespace),
-    reverse_proxy_option_header_down: $ => seq('header_down', $._horizontal_whitespaces, $.field_manipulator, $._vertical_whitespace),
+    reverse_proxy_option_header_up: $ => seq(field(
+      'reverse_proxy_option_name', 'header_up'),
+      $._horizontal_whitespaces,
+      $.field_manipulator, $._vertical_whitespace
+    ),
+    
+    reverse_proxy_option_header_down: $ => seq(field('reverse_proxy_option_name', 'header_down'),
+      $._horizontal_whitespaces,
+      $.field_manipulator,
+      $._vertical_whitespace
+    ),
     
     // TODO: When can/must start with leading '/'?
     uri_path_with_placeholders: $ => token(repeat1(

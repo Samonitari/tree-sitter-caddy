@@ -991,7 +991,7 @@
             },
             {
               "type": "PATTERN",
-              "value": "[\\w\\s\\/]+"
+              "value": "[\\w\\s\\/\\.\\*-]+"
             },
             {
               "type": "STRING",
@@ -1001,7 +1001,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[\\w\\/\\.-]+"
+          "value": "[\\w\\/\\.\\*-]+"
         }
       ]
     },
@@ -2246,6 +2246,26 @@
                       },
                       {
                         "type": "SYMBOL",
+                        "name": "fastcgi_option_resolve_root_symlink"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_dial_timeout"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_read_timeout"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_write_timeout"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "fastcgi_option_capture_stderr"
+                      },
+                      {
+                        "type": "SYMBOL",
                         "name": "reverse_proxy_option_header_up"
                       },
                       {
@@ -2272,8 +2292,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "root"
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "root"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2293,8 +2317,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "split"
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "split"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2314,8 +2342,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "env"
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "env"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2343,8 +2375,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "index"
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "index"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2373,8 +2409,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "try_files"
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "try_files"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2392,6 +2432,119 @@
           "name": "_vertical_whitespace"
         }
       ]
+    },
+    "fastcgi_option_resolve_root_symlink": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "resolve_root_symlink"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_capture_stderr": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "capture_stderr"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_dial_timeout": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "dial_timeout"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "duration_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_read_timeout": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "read_timeout"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "duration_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "fastcgi_option_write_timeout": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "php_fastcgi_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "write_timeout"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_horizontal_whitespaces"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "duration_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
+    },
+    "duration_value": {
+      "type": "PATTERN",
+      "value": "[0-9\\.]+(((n|u|m)?s)|m|h|d)"
     },
     "directive_request_body": {
       "type": "SEQ",
@@ -2458,17 +2611,8 @@
           ]
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "max_size"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "size_number"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "request_body_option_max_size"
         },
         {
           "type": "CHOICE",
@@ -2509,6 +2653,27 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "request_body_option_max_size": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "request_body_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "max_size"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "size_number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
         }
       ]
     },
@@ -2855,8 +3020,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "trusted_proxies"
+          "type": "FIELD",
+          "name": "reverse_proxy_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "trusted_proxies"
+          }
         },
         {
           "type": "REPEAT1",
@@ -2944,8 +3113,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "header_up"
+          "type": "FIELD",
+          "name": "reverse_proxy_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "header_up"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2965,8 +3138,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "header_down"
+          "type": "FIELD",
+          "name": "reverse_proxy_option_name",
+          "content": {
+            "type": "STRING",
+            "value": "header_down"
+          }
         },
         {
           "type": "SYMBOL",
