@@ -47,7 +47,7 @@ The following directives are **at least partially\*** handled.
 - [x] `rewrite`
 - [x] `root`
 - [x] `route`
-- [ ] `skip_log`
+- [x] `skip_log`
 - [ ] `templates`
 - [x] `tls`
 - [ ] `tracing`

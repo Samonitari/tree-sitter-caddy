@@ -2140,6 +2140,10 @@
     "named": true
   },
   {
+    "type": "skip_log",
+    "named": false
+  },
+  {
     "type": "snippet_name",
     "named": true
   },
