@@ -561,6 +561,10 @@
         {
           "type": "SYMBOL",
           "name": "directive_tls"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "directive_tracing"
         }
       ]
     },
@@ -3463,6 +3467,85 @@
                     "type": "SYMBOL",
                     "name": "unix_path"
                   }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "directive_tracing": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "tracing"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                },
+                {
+                  "type": "STRING",
+                  "value": "{"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_empty_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "comment_line"
+                      },
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "FIELD",
+                            "name": "directive_option_name",
+                            "content": {
+                              "type": "STRING",
+                              "value": "span"
+                            }
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_horizontal_whitespaces"
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "directive_option_user_string_value",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "uri_path_with_placeholders"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "}"
                 }
               ]
             },

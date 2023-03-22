@@ -26,6 +26,8 @@
 
 (_ directive_option_fixed_value: _ @variable.parameter)
 
+(_ directive_option_user_string_value: _ @string)
+
 [
   (matcher_name)
   (matcher_token)

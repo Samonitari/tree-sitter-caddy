@@ -179,7 +179,7 @@ module.exports = grammar({
       $.directive_skip_log,
       // $.directive_templates,
       $.directive_tls,
-      // $.directive_tracing,
+      $.directive_tracing,
       // $.directive_try_files,
       // $.directive_uri,
       // $.directive_var
@@ -772,6 +772,24 @@ module.exports = grammar({
       //   // TODO: tls options
       //   '}'
       // ))
+    ),
+
+    directive_tracing: $ => seq(
+      field('directive_type', 'tracing'),
+      optional(seq(
+        $._horizontal_whitespaces,
+        '{',
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          seq(
+            field('directive_option_name', 'span'),
+            $._horizontal_whitespaces,
+            field('directive_option_user_string_value', $.uri_path_with_placeholders)
+          )
+        )),
+        '}'
+      ))
     ),
 
     directive_route: $ => seq(

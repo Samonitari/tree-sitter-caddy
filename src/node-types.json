@@ -189,6 +189,10 @@
         {
           "type": "directive_tls",
           "named": true
+        },
+        {
+          "type": "directive_tracing",
+          "named": true
         }
       ]
     }
@@ -954,6 +958,52 @@
       "types": [
         {
           "type": "email_address",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_tracing",
+    "named": true,
+    "fields": {
+      "directive_option_name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "span",
+            "named": false
+          }
+        ]
+      },
+      "directive_option_user_string_value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "uri_path_with_placeholders",
+            "named": true
+          }
+        ]
+      },
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tracing",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
           "named": true
         }
       ]
@@ -2230,6 +2280,10 @@
     "named": true
   },
   {
+    "type": "span",
+    "named": false
+  },
+  {
     "type": "split",
     "named": false
   },
@@ -2251,6 +2305,10 @@
   },
   {
     "type": "tls",
+    "named": false
+  },
+  {
+    "type": "tracing",
     "named": false
   },
   {

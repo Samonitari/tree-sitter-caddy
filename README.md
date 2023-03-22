@@ -50,7 +50,7 @@ The following directives are **at least partially\*** handled.
 - [x] `skip_log`
 - [ ] `templates`
 - [x] `tls`
-- [ ] `tracing`
+- [x] `tracing`
 - [ ] `try_files`
 - [ ] `uri`
 - [ ] `var`
