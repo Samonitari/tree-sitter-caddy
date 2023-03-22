@@ -147,6 +147,10 @@
           "named": true
         },
         {
+          "type": "directive_metrics",
+          "named": true
+        },
+        {
           "type": "directive_php_fastcgi",
           "named": true
         },
@@ -176,6 +180,10 @@
         },
         {
           "type": "directive_route",
+          "named": true
+        },
+        {
+          "type": "directive_skip_log",
           "named": true
         },
         {
@@ -478,6 +486,46 @@
         },
         {
           "type": "log_option_output",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_metrics",
+    "named": true,
+    "fields": {
+      "directive_option_name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "disable_openmetrics",
+            "named": false
+          }
+        ]
+      },
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "metrics",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "matcher_token",
           "named": true
         }
       ]
@@ -832,6 +880,32 @@
           "type": "directive_block",
           "named": true
         },
+        {
+          "type": "matcher_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "directive_skip_log",
+    "named": true,
+    "fields": {
+      "directive_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "skip_log",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
         {
           "type": "matcher_token",
           "named": true
@@ -1900,6 +1974,10 @@
     "named": false
   },
   {
+    "type": "disable_openmetrics",
+    "named": false
+  },
+  {
     "type": "disable_redirects",
     "named": false
   },
@@ -2045,6 +2123,10 @@
   },
   {
     "type": "message",
+    "named": false
+  },
+  {
+    "type": "metrics",
     "named": false
   },
   {

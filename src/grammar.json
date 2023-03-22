@@ -520,6 +520,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "directive_metrics"
+        },
+        {
+          "type": "SYMBOL",
           "name": "directive_php_fastcgi"
         },
         {
@@ -549,6 +553,10 @@
         {
           "type": "SYMBOL",
           "name": "directive_route"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "directive_skip_log"
         },
         {
           "type": "SYMBOL",
@@ -2557,6 +2565,93 @@
     "duration_value": {
       "type": "PATTERN",
       "value": "[0-9\\.]+(((n|u|m)?s)|m|h|d)"
+    },
+    "directive_metrics": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive_type",
+          "content": {
+            "type": "STRING",
+            "value": "metrics"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "matcher_token"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_horizontal_whitespaces"
+                },
+                {
+                  "type": "STRING",
+                  "value": "{"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_empty_line"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "comment_line"
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "directive_option_name",
+                        "content": {
+                          "type": "STRING",
+                          "value": "disable_openmetrics"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "}"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_vertical_whitespace"
+        }
+      ]
     },
     "directive_request_body": {
       "type": "SEQ",

@@ -165,7 +165,7 @@ module.exports = grammar({
       $.directive_log,
       // $.directive_map,
       // $.directive_method,
-      // $.directive_metrics,
+      $.directive_metrics,
       $.directive_php_fastcgi,
       // $.directive_push,
       $.directive_redir,
@@ -176,7 +176,7 @@ module.exports = grammar({
       $.directive_rewrite,
       $.directive_root,
       $.directive_route,
-      // $.directive_skip_log,
+      $.directive_skip_log,
       // $.directive_templates,
       $.directive_tls,
       // $.directive_tracing,
@@ -611,6 +611,22 @@ module.exports = grammar({
     ),
 
     duration_value: $ => /[0-9\.]+(((n|u|m)?s)|m|h|d)/,
+
+    directive_metrics: $ => seq(
+      field('directive_type', 'metrics'),
+      optional(seq($._horizontal_whitespaces, $.matcher_token)),
+      optional(seq(
+        $._horizontal_whitespaces,
+        '{',
+        repeat1(choice(
+          $._empty_line,
+          $.comment_line,
+          field('directive_option_name', 'disable_openmetrics')
+        )),
+        '}'
+      )),
+      $._vertical_whitespace
+    ),
 
     directive_request_body: $ => seq(
       field('directive_type', 'request_body'),
